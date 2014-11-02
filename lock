@@ -1,0 +1,39 @@
+#include<unistd.h>
+#include<sys/file.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+int lock_test(int fd, int type,off_t offset, int whence, off_t len);  //测试锁
+
+lock_test(int fd, int type,off_t offset, int whence, off_t len)
+{
+    struct flock lock;
+    lock.1_type = type;
+    lock.1_start = offset;
+    lock.1_whence = whence;
+    lock.1_len = len;
+    if(fcnt1(fd,F_GETLK,&lock)<0)
+    {
+        perror("fcnt1");
+    }
+    else
+    {
+        switch(lock.1_type)
+        {
+           case   F_RDLCK:
+                  printf("read lock already set by process %d/n,lock.1_pid);
+                  break;
+           case   F_WRLCK:
+                  printf("write lock already set by process %d/n,lock.1_pid);
+                  break;
+           case   F_UNLCK:
+                  printf("no lock is set");
+                  return 1;
+        }
+    }
+    return 0;
+}
+           
