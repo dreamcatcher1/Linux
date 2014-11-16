@@ -1,0 +1,50 @@
+int main（int argc,char *argv[])
+{
+    int fd,nwrite,nread,len,c;
+    char reply;
+    char buf[100];
+    char buf_r[100];
+    /*打开文件*/
+    fd=open("hello",O_RDWR | )_CREAT, 0666);
+    if(fd < 0){
+                perror("open");
+                exit(1);
+                }
+
+             strcpy(buff,optarg);
+             if（lock_test(fd,F_WRLCk,0,seek_set,0) == 0)
+             { 
+                close(fd);
+                exit(0);
+             }
+             if(lock_reg(fd,F_SETLCK,F_WRLCK,0,SEEK_SET,0)
+             {
+                printf("fail to set write lock!");
+                close(fd);
+                exit(0);
+            }
+            len =strlen(buff);
+            if((nwrite=write(fd,buff,len+1))>0){
+                     printf("write success\n");
+            {
+            while(1)
+            {
+               printf("want to unlock?(Y/N)\n");
+               scanf("%c",&reply);
+               /*给文件解锁*/
+               if((reply=='Y')||(reply=='y'))
+               {
+                  if(lock_reg(fd,F_SETLCK,F_UNLCK,0,SEEK_SET,0)==0)
+                  {
+                     printf("release lock by process%d\n",getpid());
+                  }
+                  break;
+                }
+                else
+                {
+                  sleep(2);
+                }
+            }
+}
+                
+                     
