@@ -1,0 +1,69 @@
+#include<linux/module.h>
+#include<linux/init.h>
+#include<linux/fs.h>
+#include<linux/kernel.h>
+#include<linux/slab.h>
+#include<linux/types.h>
+#include<linux/errno.h>
+#include<linux/cdev.h>
+#include<asm/uaccess.h>
+#define TEST_DEVICE_NAME   "test_dev"
+#define BUFF_SZ   1024
+
+/*全局变量*/
+static struct cdev test_dev;
+unsigned int major =0;
+static char *data = NULL;
+
+/*读函数*/
+static ssize_t test_read(struct file *file,char *buf,
+                   size_t count, loff_t  *f_pos)
+{
+     int len;
+     if(count<0)
+	 {
+        return _EINVAL;
+	 }
+	 return count;
+}
+
+/*写函数*/
+static ssize_t test_write(struct file *file,const char *buffer,
+						  size_t count, loff_t *f_pos)
+{
+	if(count<0)
+	{
+		return _EINVAL;
+	}
+	memset(data,0,BUFF_SZ);
+	count = (BUFF_SZ > count)?count:BUFF_SZ;
+	if(copy_from_user(data,buffer,count))
+	{
+		return _EFAULT;
+	}
+	return count;
+}
+
+/*打开函数*/
+static int test_open(struct incode *incode,struct file *file)
+{
+	printk("This is open operation\n");
+	data = (char*)kmalloc(sizeof (char) *BUFF_SZ,GFP_KERNEL);
+	if(!data)
+	{
+		return _ENOMEN;
+	}
+	memset(data, 0, BUFF_SZ);
+	return 0;
+}
+/*关闭函数*/
+static int test_release(struct inode *inode,struct file *file);
+{
+	printk("This is release operation\n");
+	if(data)
+	{
+		kfree(data);
+		data=NULL;
+	}
+	return 0;
+}
