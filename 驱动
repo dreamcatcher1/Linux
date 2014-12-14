@@ -67,3 +67,58 @@ static int test_release(struct inode *inode,struct file *file);
 	}
 	return 0;
 }
+
+/*创建、初始化字符设备，并且注册到系统*/ 
+static void test_setup_cdev(struct cdev *dev,int minor,
+                            struct file_operation *fops)
+{
+	int err,devno=MKDEV(major,minor);
+	cdev_init(dev,fops);
+	dev->owner=THIS_MODULE;
+	dev->ops=fops;
+	err=cdev_add(dev,devno,1);
+	if(err)
+	{
+		printk(KERN_NOTICE "Error %d adding test %d",err,minor);
+	}
+}
+
+/*虚拟设备的file_operations 结构*/
+static struct file_operations test_fops=
+{
+	.owner=THIS_MODULE;
+	.read= test_read;
+	.write=test_open,
+	.release=test_release,
+} ;
+
+/*模块注册入口*/
+int init_module(void)
+{
+	int result;
+	dev_t dev=MKDEV(major,0);
+	if(major)
+	{
+		result=register_chrdev_region(dev,1,TEST_DEVICE_NAME);
+	}
+	else
+	{
+		result=alloc_chrdev_region(&dev,0,1,TEST_DEVICE_NAME);
+	}
+	if(result<0)
+	{
+		printk(KERN_WARNING "Test device:unable to get major %d\n",major);
+		return result; 
+	}
+	test_setup_cdev(&test)dev,0,&test_fops);
+	printk("The major of the test device is %d\n".major);
+	return 0;
+} 
+
+/*卸载模块*/
+void cleanup_module(void)
+{
+	cdev_del(&test_dev);
+	unregister_chrdev_region(MKDEV(major,0),1);
+	printk("Test device uninstalled\n");
+} 
