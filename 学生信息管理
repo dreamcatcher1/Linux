@@ -1,0 +1,268 @@
+#include <stdio.h>
+#include <malloc.h>
+#include <string.h>
+#include <stdlib.h>
+#define NULL 0
+#define LEN sizeof(struct student)
+struct student  
+{
+ char name[20];
+ long int num;
+ char sex[4];
+ int age;
+ char address[30];
+ double tele_num;
+ char aihao[20];
+ float cj[4];
+ struct student *next;
+};//定义一个结构题
+int TOTAL_NUM = 0;//学生总数
+struct student *head = NULL;
+void welcome (); //欢迎界面
+void mainmenu (); //主界面
+void record (); //记录数据
+void insert(struct student *stu); //插入数据
+void display(struct student *stu); //显示一个学生的信息
+void displayAll (); //显示所有学生的信息
+void query_by_num (); //按学号查询学生信息
+void read(); //读取文件里学生的信息
+void save (); //向文件写入学生信息
+void freeAll (); //清空链表内容
+void del (); //删除学生信息
+void change (); //更改学生信息
+void display1(struct student *p);
+void devise (struct student *p); //选择更改内容
+void mima();//输入密码
+void denglu();//用户登陆
+int main (void)
+{
+    system("color F0");
+	denglu();
+	return 0;
+}
+void denglu()
+{
+	char yonghu[5];int b=0;	
+	printf("\n\n\n\n\n\n\n");
+	printf ("\t      +----------------------------------------------------+\n");
+	printf("\t\t\t请输入用户名:");
+	gets(yonghu);
+	printf("\n");
+	if(!(strcmp(yonghu,"aaa")))
+	{				
+		while(b<3)
+		{
+			mima();
+			b++;			
+		}
+           exit (0);
+	}
+            	
+	else
+		printf("对不起，该用户不存在");
+}
+void mima()
+{
+	    
+		char mi[6];	
+		printf("\t\t\t请输入密码:");
+		gets(mi);
+		while(!(strcmp(mi,"asd")))
+		{
+			system("cls");
+			welcome ();//显示主菜单             
+            mainmenu ();
+		}
+		printf("\t\t\t对不起，密码错误\n");
+}		
+//显示欢迎信息
+void welcome ()
+{
+    printf ("\t\t+----------------------------------------------------+\n");
+    printf ("\t\t|                                                    |\n");
+    printf ("\t\t|  欢迎使用通信工程学院电信121班学生信息管理系统     |\n");
+    printf ("\t\t|                                                    |\n");
+    printf ("\t\t+----------------------------------------------------+\n");
+}
+
+//系统主菜单
+void mainmenu ()
+{
+
+	 int choice;
+    choice = -1;
+    read();
+ printf ("\n温馨提示：为保证您的操作得到保存，请按正常顺序退出系统^_^\n");
+    do
+    {
+        printf ("\n\n\n");
+        printf ("\t\t    --------------------------------------------\n");
+  printf (" \t\t    +           电信121班学生信息管理系统      |\n"); 
+  printf (" \t\t    --------------------------------------------\n");              
+  printf (" \t\t    +           [1]----录入学生信息            |\n");
+  printf (" \t\t    +           [2]----浏览学生信息            |\n");
+  printf (" \t\t    +           [3]----查询学生信息            |\n");
+  printf (" \t\t    +           [4]----删除学生信息            |\n");
+  printf (" \t\t    +           [5]----修改学生信息            |\n"); 
+  printf (" \t\t    +           [0]----退出系统                |\n");
+  printf (" \t\t    +*·*·*·*·*·*·*·*·*·*·*·*·*·*·*|\n");
+  printf (" \t\t    --------------------------------------------\n");
+        printf ("请输入您的选择：");
+        scanf ("%d", &choice);
+		switch (choice)
+        {
+            case 0:
+                save();
+                freeAll ();
+                exit(0);
+   case 1:
+	            system("cls");           
+                record ();
+                break;
+   case 2:
+                system("cls");
+                displayAll ();
+                break;
+   case 3:
+                system("cls");
+                query_by_num ();
+                break; 
+   case 4:
+                system("cls");
+                del ();
+                break;
+   case 5:
+                system("cls");
+                change ();
+                break;	            
+   default:
+                printf ("\n无效选项!");
+                break;
+        }
+    }
+    while (choice != 0);
+}
+
+//录入学生信息
+void record ()
+{
+ struct student *p0;  
+ p0 = (struct student *)malloc(LEN);
+ printf ("请输入学生的姓名:");
+ scanf ("%s",p0->name);   
+ printf ("请输入学生的学号:");
+ scanf ("%ld",&p0->num);
+ printf ("请输入学生的性别:");
+ scanf ("%s",&p0->sex);
+ printf ("请输入学生的年龄:");
+ scanf ("%d",&p0->age);
+ printf ("请输入学生的地址:");
+ scanf ("%s",&p0->address);
+ printf ("请输入学生的电话:");
+ scanf ("%lf",&p0->tele_num);
+  printf ("请输入学生的爱好:");
+ scanf ("%s",&p0->aihao);
+ printf("请输入学生的成绩:");
+ for(int i=0;i<3;i++)
+ scanf("%f",&p0->cj[i]);
+ p0->cj[3]=(p0->cj[0]+p0->cj[1]+p0->cj[2])/3;
+ insert (p0);
+ printf ("该学生的信息为:\n");
+  printf ("-------------------------------------------------------------------------------\n");
+ printf ("姓名\t学号\t年龄\t性别\t地址\t电话\t\t爱好\n");
+ display (p0);
+ display1(p0);
+ system("cls");
+ 
+}
+void display1(struct student *p)
+{
+	printf("高数\t电路\tc语言\t平均分\n");
+    printf("%.1f\t%.1f\t%.1f\t%.1f\n",p->cj[0],p->cj[1],p->cj[2],p->cj[3]);
+}
+
+void insert (struct student *stu)
+{
+ struct student *p0, *p1, *p2;
+
+ p1 = head;
+ p0 = stu;
+
+ if (head == NULL)
+ {
+  head = p0;
+  p0->next = NULL;
+ }
+ else
+ {
+  while ((p0->num > p1->num)&&(p1->next != NULL))
+  {
+   p2 = p1;
+   p1 = p1->next;	  
+  }
+  if (p0->num <= p1->num)
+  {	
+   if (head == p1)
+   head = p0;
+   else
+   p2->next = p0;
+   p0->next = p1;
+  }
+  else
+  {
+   p1->next = p0;
+   p0->next = NULL;
+  } 
+ }
+ TOTAL_NUM++;
+}
+
+void display (struct student *p)
+{
+ printf ("%s\t%ld\t%d\t%s\t%s\t\t%.0f\t%s\n", p->name, p->num, p->age, p->sex, p->address, p->tele_num, p->aihao);
+}
+//浏览学生信息
+void displayAll()
+{
+ struct student *p;
+
+ printf("学生总数:%d\n", TOTAL_NUM);
+ p = head;
+ if (head != NULL)
+ {
+  printf("\n姓名\t学号\t年龄\t性别\t地址\t电话\t\t爱好\n");
+  printf("-------------------------------------------------------------------------------\n");
+  do
+  {
+   display(p);
+   p = p->next;
+  }
+  while(p != NULL);
+ }
+ printf ("\n");
+}
+//按学号查询学生信息
+void query_by_num ()
+{
+ int num;
+ struct student *p1;
+ printf("请输入学生的学号：");
+ scanf("%ld", &num);
+ if(head==NULL)
+ {
+  printf("无学生记录！\n");
+  return;
+ }
+ p1 = head;
+ while (num!=p1->num && p1->next!=NULL)
+ p1 = p1->next;
+ if (num == p1->num)
+ {
+  printf ("姓名\t学号\t年龄\t性别\t地址\t电话\t\t爱好\n");
+  printf ("-------------------------------------------------------------------------------\n");
+  display (p1);
+  display1(p1);
+ }
+ else
+ printf ("没有该学生记录，请核对！");
+}
