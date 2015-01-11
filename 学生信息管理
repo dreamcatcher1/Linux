@@ -266,3 +266,185 @@ void query_by_num ()
  else
  printf ("没有该学生记录，请核对！");
 }
+//写入文件
+void save ()
+{
+ FILE*  fp;//文件指针
+ struct student *p;
+
+    fp = fopen("1.txt", "w");
+    if (!fp)
+    {
+  printf("文件打开错误！");
+  return;
+    }
+
+ fprintf(fp,"%d\n", TOTAL_NUM);
+    for(p = head; p!= NULL; p= p->next)
+    {
+        fprintf(fp,"%s\t%ld\t%s\t%d\t%s\t%lf\t%s\t%.1f\n", p->name, p->num, p->sex, p->age, p->address, p->tele_num, p->aihao,p->cj);
+    }
+    fclose (fp);
+}
+
+void freeAll ()
+{
+ struct student *p1, *p2;
+
+ p1 = p2=head;
+ while(p1)
+ {
+  p2=p1->next;
+  free (p1);
+  p1 = p2;
+ }
+}
+//读取文件
+void read()
+{
+ FILE*  fp;//文件指针
+ struct student *p1, *p2;
+    fp = fopen("1.txt", "r+");
+    if (!fp)
+    {
+        printf("文件打开错误！");
+        return;
+    }
+
+ fscanf(fp,"%d\n", &TOTAL_NUM);
+ head = p1 = p2 = (struct student *)malloc(LEN);
+ fscanf(fp,"%s\t%ld\t%s\t%d\t%s\t%lf\t%s\t%.1f\n", p1->name, &p1->num, p1->sex, &p1->age, p1->address, &p1->tele_num, p1->aihao,p1->cj);
+ while(!feof(fp))
+ {
+  p1 = (struct student *)malloc(LEN);
+  fscanf(fp,"%s\t%ld\t%s\t%d\t%s\t%lf\t%s\t%.1f\n", p1->name, &p1->num, p1->sex, &p1->age, p1->address, &p1->tele_num, p1->aihao,p1->cj);
+  p2->next = p1;
+  p2 = p1;
+ }
+ p2->next = NULL;
+ fclose(fp);
+}
+//删除学生信息
+void del ()
+{
+ struct student *p1, *p2;
+ long int num;
+
+ if (head == NULL)
+ {
+  printf("无学生记录！\n");
+  return;
+ }
+
+ printf("请输入您要删除的学生的学号：");
+ scanf("%ld", &num);
+ p1 = head;
+
+ while (num != p1->num && p1->next != NULL)
+ {
+  p2 = p1;
+  p1 = p1->next; 
+ }
+ if(num == p1->num)
+ {
+  if(p1 == head)
+  head = p1->next;
+  else p2->next = p1->next;
+  free(p1);
+  TOTAL_NUM--;
+ }
+ else
+ printf("没有该学生记录，请核对！\n");
+}
+//修改学生信息
+void change ()
+{
+ struct student *p1, *p2;
+ long int num;
+ if (head == NULL)
+ {
+  printf ("无学生记录！\n");
+  return;
+ }
+ printf ("请输入您要修改的学生的学号：");
+ scanf ("%ld", &num);
+ p1 = head;
+ while (num != p1->num && p1->next != NULL)
+ {
+  p2 = p1;
+  p1 = p1->next; 
+ }
+ if(num == p1->num)
+ devise (p1);
+ else
+ printf("没有该学生记录，请核对！\n");
+}
+
+void devise (struct student *p)
+{
+ int choice,c;
+    choice = -1;
+    do
+    {
+        printf("请选择您要修改的学生的信息内容：\n");
+        printf("+----------------------+\n");       
+        printf("| 姓名          请按 1 |\n");
+        printf("| 学号          请按 2 |\n");
+        printf("| 性别          请按 3 |\n");
+        printf("| 年龄          请按 4 |\n");
+        printf("| 地址          请按 5 |\n");
+        printf("| 电话          请按 6 |\n");
+        printf("| 爱好          请按 7 |\n");
+	    printf("| 成绩          请按 8 |\n");
+        printf("| 取消          请按 0 |\n");
+	 
+        printf("+----------------------+\n");
+
+        printf("请输入您的选择：");
+        scanf("%d", &choice);
+      
+        switch (choice)
+        {
+            case 0:
+                return;
+            case 1:
+                printf("请输入新姓名：");
+                scanf("%s", p->name);
+                break;
+            case 2:
+                printf("请输入新学号：");
+                scanf("%d", &p->num);
+                break;
+   case 3:
+                printf("请输入新性别：");
+                scanf("%s", p->sex);
+                break;
+   case 4:
+                printf("请输入新年龄：");
+                scanf("%s", &p->age);
+                break;
+   case 5:
+                printf("请输入新地址：");
+                scanf("%s", p->address);
+                break;
+   case 6:
+                printf("请输入新电话：");
+                scanf("%lf", &p->tele_num);
+                break;
+   case 7:
+                printf("请输入新爱好：");
+                scanf("%s", p->aihao);
+                break;
+   case 8:
+	            printf("请输入新成绩:");
+	            for(c=0;c<3;c++)
+                  scanf("%d",&p->cj[c]);
+				p->cj[3]=(p->cj[0]+p->cj[1]+p->cj[2])/3;
+				break;
+   default:
+                printf("\n无效选项!");
+                break;
+        }
+    }
+    while(choice != 0);
+}	
